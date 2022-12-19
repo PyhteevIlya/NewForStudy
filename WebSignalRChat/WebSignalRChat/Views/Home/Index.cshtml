@@ -1,0 +1,122 @@
+﻿@model IEnumerable<WebSignalRChat.Models.SendModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="online">
+
+</div>
+
+<div id="chatroom">
+
+</div>
+
+<br />
+@{
+      if (Model != null)
+       {
+           foreach (var input in Model)
+           {
+               <tr>
+                   <td>@input.Id</td>
+                <td>@input.Value</td>
+               </tr>
+           }
+       }
+}
+<form action="/Home/DataInputAdd"method="post">
+<div id="inputForm">
+    <input type="text" id="message" />
+    <input type="button" id="sendBtn" value="Отправить" />
+    <input type="button" class='OutBtn' id="OutBtn" value="Войти в общий чат" />
+</div>
+</form>      
+<script>
+    let peerConnectionId = null;
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/chat")
+        .build();
+
+    hubConnection.on("SendMessage", function (data) {
+
+        let elem = document.createElement("p");
+        elem.appendChild(document.createTextNode(data));
+        let firstElem = document.getElementById("chatroom").firstChild;
+        document.getElementById("chatroom").insertBefore(elem, firstElem);
+
+    });
+
+
+    hubConnection.on("UpdateOnline", function (data) {
+        $('#online').empty();
+
+        
+
+        $.each(data, function(key, value){
+            if (value == hubConnection.connectionId) {
+                $('#online').append("<p>" + value + "(это я)</p>");
+            }
+            else
+            {
+                $('#online').append("<p data-id='" + value + "'><span class='connection'>" + value + "</span> (<button class='inviteButton' data-id='" + value + "'>пригласить</button>)</p>");
+            }
+        })
+
+    });
+
+
+    hubConnection.on("SendInvite", function (inviterConnectionId) {
+        peerConnectionId = inviterConnectionId;
+
+        const elem = $('p[data-id="' + inviterConnectionId + '"]');
+
+        elem.find('.connection').css('font-weight', 700);
+        elem.find('button').hide();
+    });
+
+    document.getElementById("sendBtn").addEventListener("click", function (e) {
+        let message = document.getElementById("message").value;
+        hubConnection.invoke("CreateMessage", message, peerConnectionId);
+    });
+
+    hubConnection.start();
+
+    $(function(){
+
+        $(document).on('click', '.inviteButton', function () {
+            const connectionId = $(this).data('id');
+            peerConnectionId = connectionId;
+
+            //document.getElementsByClassName('inviteButton').prop('disabled', true);
+            $(this).prop('disabled', true);
+
+            $(this).closest('p').find('.connection').css('font-weight', 700);
+
+            hubConnection.invoke("Invite", connectionId);
+
+
+        });
+
+    });
+
+    document.getElementById("OutBtn").addEventListener("click", function () {
+       
+        location.reload();
+          
+    });
+
+    //$(function(){
+
+    //    $(document).on('click', '.OutBtn', function () {
+    //        const connectionId = $(this).data('id');
+    //        peerConnectionId = null;
+
+    //        $(this).prop('disabled', false);
+    //        $(this).css('font-weight', normal);
+
+        //});
+
+    //});
+
+</script>
+
