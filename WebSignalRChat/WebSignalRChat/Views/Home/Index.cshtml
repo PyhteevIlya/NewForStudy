@@ -6,31 +6,46 @@
 <div id="online">
 
 </div>
+<br />
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Номер сообщения</th>
+            <th>От кого</th>
+            <th>Сообщение</th>
+            <th>Время отправки</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+              if (Model != null)
+               {
+                   foreach (var input in Model)
+                   {
+                       <tr>
+                        <td> @input.Id</td>
+                        <td> @input.From</td>
+                        <td> @input.Value</td>
+                        <td> @input.TimeOnly</td>
+                       </tr>
+                   }
+               }
+        }
+    </tbody>
+</table>
 
 <div id="chatroom">
-
 </div>
 
-<br />
-@{
-      if (Model != null)
-       {
-           foreach (var input in Model)
-           {
-               <tr>
-                   <td>@input.Id</td>
-                <td>@input.Value</td>
-               </tr>
-           }
-       }
-}
-<form action="/Home/DataInputAdd"method="post">
+
+@*<form action="/Home/DataInputAdd"method="post">*@
 <div id="inputForm">
     <input type="text" id="message" />
     <input type="button" id="sendBtn" value="Отправить" />
     <input type="button" class='OutBtn' id="OutBtn" value="Войти в общий чат" />
 </div>
-</form>      
+@*</form>    *@ 
 <script>
     let peerConnectionId = null;
     const hubConnection = new signalR.HubConnectionBuilder()
@@ -71,7 +86,7 @@
         const elem = $('p[data-id="' + inviterConnectionId + '"]');
 
         elem.find('.connection').css('font-weight', 700);
-        elem.find('button').hide();
+        elem.find('button').attr('disabled', true);
     });
 
     document.getElementById("sendBtn").addEventListener("click", function (e) {
@@ -88,7 +103,9 @@
             peerConnectionId = connectionId;
 
             //document.getElementsByClassName('inviteButton').prop('disabled', true);
-            $(this).prop('disabled', true);
+            //$(this).prop('disabled', true);
+
+            $(this).attr('disabled', true);
 
             $(this).closest('p').find('.connection').css('font-weight', 700);
 

@@ -14,9 +14,9 @@ namespace WebSignalRChat.Controllers
             _context = context; 
         }
 
-        public IActionResult Index()
+        public IActionResult Index(SendModel SendModel)
         {
-            return View();
+            return View(_context.SendModels);
         }
 
         public IActionResult Privacy()
@@ -25,9 +25,9 @@ namespace WebSignalRChat.Controllers
         }
 
         [HttpPost]
-        public IActionResult DataInputAdd(SendModel DataInput)
+        public IActionResult DataInputAdd(SendModel SendModel)
         {
-            _context.SendModels.Add(DataInput);
+            _context.SendModels.Add(SendModel);
             _context.SaveChanges();
 
             return Ok();

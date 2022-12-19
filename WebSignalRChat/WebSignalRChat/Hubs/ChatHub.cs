@@ -1,15 +1,21 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using WebSignalRChat.Models;
 using WebSignalRChat.Services;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebSignalRChat.Hubs
 {
     public class ChatHub : Hub
     {
         private readonly ChatService _chatService;
+        private readonly ApplicationContext _context;
 
-        public ChatHub(ChatService chatService) 
+        public object Id { get; private set; }
+
+        public ChatHub(ChatService chatService, ApplicationContext context) 
         {
             _chatService=chatService;
+            _context = context;
         }
 
         //public async Task Send(string message, string userName)
@@ -41,6 +47,10 @@ namespace WebSignalRChat.Hubs
 
         public async Task CreateMessage(string message, string? connectionId)
         {
+            var SendModel = new SendModel { From= Context.ConnectionId, Value= message, TimeOnly = DateTime.Now};
+            _context.SendModels.Add(SendModel);
+            _context.SaveChanges();
+
             if (connectionId == null)
             {
                 await Clients.All.SendAsync("SendMessage", message);
