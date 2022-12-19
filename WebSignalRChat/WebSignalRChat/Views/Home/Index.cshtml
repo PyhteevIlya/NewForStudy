@@ -86,7 +86,8 @@
         const elem = $('p[data-id="' + inviterConnectionId + '"]');
 
         elem.find('.connection').css('font-weight', 700);
-        elem.find('button').attr('disabled', true);
+        //elem.find('button').attr('disabled', true);
+        $('.inviteButton').attr('disabled', true);
     });
 
     document.getElementById("sendBtn").addEventListener("click", function (e) {
@@ -105,7 +106,7 @@
             //document.getElementsByClassName('inviteButton').prop('disabled', true);
             //$(this).prop('disabled', true);
 
-            $(this).attr('disabled', true);
+            $('.inviteButton').attr('disabled', true);
 
             $(this).closest('p').find('.connection').css('font-weight', 700);
 
@@ -118,7 +119,10 @@
 
     document.getElementById("OutBtn").addEventListener("click", function () {
        
-        location.reload();
+        peerConnectionId = null;
+        $('.inviteButton').removeAttr('disabled', true);
+        //location.reload();
+
           
     });
 
