@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using WebSignalRChat.Models;
+using WebSignalRChat.Services;
 
 namespace WebSignalRChat.Controllers
 {
@@ -8,17 +11,36 @@ namespace WebSignalRChat.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationContext _context;
-        public HomeController(ILogger<HomeController> logger, ApplicationContext context)
+        private readonly ChatService _chatService;
+        public HomeController(ILogger<HomeController> logger, ApplicationContext context, ChatService chatService)
         {
             _logger = logger;
-            _context = context; 
+            _context = context;
+            _chatService = chatService;
         }
 
         public IActionResult Index(SendModel SendModel)
         {
+            RecurringJob.AddOrUpdate(() => DeleteSend(), Cron.Minutely);
             return View(_context.SendModels);
         }
 
+        [HttpDelete]
+
+        public IActionResult DeleteSend() 
+        {
+            //SendModel SendModel = _context.SendModels.FirstOrDefault();
+
+            //if (SendModel == null)
+            //    return NotFound();
+
+            
+            _context.SendModels.RemoveRange(_context.SendModels);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+        
         public IActionResult Privacy()
         {
             return View();

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using WebSignalRChat.Models;
 using WebSignalRChat.Services;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Hangfire;
 
 namespace WebSignalRChat.Hubs
 {
@@ -12,22 +14,36 @@ namespace WebSignalRChat.Hubs
 
         public object Id { get; private set; }
 
-        public ChatHub(ChatService chatService, ApplicationContext context) 
+        public ChatHub(ChatService chatService, ApplicationContext context)
         {
-            _chatService=chatService;
+            _chatService = chatService;
             _context = context;
         }
 
-        //public async Task Send(string message, string userName)
+        //[HttpGet]
+        //public async Task<IActionResult> Index()
         //{
-        //    await Clients.All.SendAsync("Send", message, userName);
+        //    RecurringJob.AddOrUpdate(() => runprocess(), "* * * * *");
+        //    return View();
         //}
 
+        //private IActionResult View()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public async Task runprocess()
+        {
+            _context.SendModels.RemoveRange(_context.SendModels);
+            _context.SaveChanges();
+        }
 
         public override async Task OnConnectedAsync()
         {
             //await Clients.All.SendAsync("Notify", $"{Context.ConnectionId} вошел в чат");
             _chatService.Connections.Add(Context.ConnectionId);
+
+            RecurringJob.AddOrUpdate(() => runprocess(), "* * * * *");
 
             await Clients.All.SendAsync("UpdateOnline", _chatService.Connections);
 
@@ -61,13 +77,7 @@ namespace WebSignalRChat.Hubs
                 await Clients.Client(connectionId).SendAsync("SendMessage", message);
             }
         }
-
         public async Task Invite(string connectionId)
-        {
-            await Clients.Client(connectionId).SendAsync("SendInvite", Context.ConnectionId);
-        }
-
-        public async Task Out(string connectionId)
         {
             await Clients.Client(connectionId).SendAsync("SendInvite", Context.ConnectionId);
         }

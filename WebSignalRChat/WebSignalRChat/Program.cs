@@ -1,3 +1,6 @@
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Hangfire.Storage.SQLite;
 using Microsoft.EntityFrameworkCore;
 using WebSignalRChat;
 using WebSignalRChat.Hubs;
@@ -12,11 +15,17 @@ builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<ChatService>();
 
+builder.Services.AddHangfire(config =>config
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSQLiteStorage(builder.Configuration.GetConnectionString("ChatDBConnection"))
+);
 
 var connectionString = builder.Configuration.GetConnectionString("ChatDBConnection");
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
 options.UseSqlite(connectionString));
+
 
 
 var app = builder.Build();
@@ -33,6 +42,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseHangfireDashboard();
+app.MapHangfireDashboard();
 
 app.UseAuthorization();
 
