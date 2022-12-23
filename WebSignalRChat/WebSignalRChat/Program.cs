@@ -1,3 +1,4 @@
+using AutoMapper;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.Storage.SQLite;
@@ -26,6 +27,15 @@ var connectionString = builder.Configuration.GetConnectionString("ChatDBConnecti
 builder.Services.AddDbContext<ApplicationContext>(options =>
 options.UseSqlite(connectionString));
 
+builder.Services.AddAutoMapper(typeof(AppMappingProfile));
+
+//var mapperConfig = new MapperConfiguration(mc =>
+//{
+//    mc.AddProfile(new AppMappingProfile());
+//});
+
+//IMapper mapper = mapperConfig.CreateMapper();
+//builder.Services.AddSingleton(mapper);
 
 
 var app = builder.Build();

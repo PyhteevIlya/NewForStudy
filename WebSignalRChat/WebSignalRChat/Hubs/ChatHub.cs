@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using WebSignalRChat.Models;
 using WebSignalRChat.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Hangfire;
+using AutoMapper;
 
 namespace WebSignalRChat.Hubs
 {
@@ -11,13 +10,14 @@ namespace WebSignalRChat.Hubs
     {
         private readonly ChatService _chatService;
         private readonly ApplicationContext _context;
-
+        private readonly IMapper _mapper;
         public object Id { get; private set; }
 
-        public ChatHub(ChatService chatService, ApplicationContext context)
+        public ChatHub(ChatService chatService, ApplicationContext context, IMapper mapper)
         {
             _chatService = chatService;
             _context = context;
+            _mapper = mapper;
         }
 
         //[HttpGet]
@@ -34,6 +34,7 @@ namespace WebSignalRChat.Hubs
 
         public async Task runprocess()
         {
+
             _context.SendModels.RemoveRange(_context.SendModels);
             _context.SaveChanges();
         }

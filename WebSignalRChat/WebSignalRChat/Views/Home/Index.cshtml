@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebSignalRChat.Models.SendModel>
+﻿@model IEnumerable<WebSignalRChat.Models.MapSendModel>
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -10,7 +10,7 @@
 <table class="table table-hover">
     <thead>
         <tr>
-            <th>Номер сообщения</th>
+           @* <th>Номер сообщения</th>*@
             <th>От кого</th>
             <th>Сообщение</th>
             <th>Время отправки</th>
@@ -24,7 +24,7 @@
                    foreach (var input in Model)
                    {
                        <tr>
-                        <td> @input.Id</td>
+                        @*<td> @input.Id</td>*@
                         <td> @input.From</td>
                         <td> @input.Value</td>
                         <td> @input.TimeOnly</td>
