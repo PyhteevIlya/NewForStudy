@@ -9,8 +9,8 @@ namespace WebSignalRChat.Services
         public async Task runprocess()
         {
 
-            _context.SendModels.RemoveRange(_context.SendModels);
-            _context.SaveChanges();
+            //_context.SendModels.RemoveRange(_context.SendModels);
+            //_context.SaveChanges();
         }
 
     }

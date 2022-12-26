@@ -42,21 +42,6 @@ namespace WebSignalRChat.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult DataInputAdd(SendModel SendModel)
-        //{
-        //    _context.SendModels.Add(SendModel);
-        //    _context.SaveChanges();
-
-        //    return Ok();
-        //}
-
-        //[HttpGet]
-        //public IActionResult Spisok()
-        //{
-        //    return View(_context.SendModels);
-
-        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

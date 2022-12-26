@@ -20,18 +20,6 @@ namespace WebSignalRChat.Hubs
             _mapper = mapper;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Index()
-        //{
-        //    RecurringJob.AddOrUpdate(() => runprocess(), "* * * * *");
-        //    return View();
-        //}
-
-        //private IActionResult View()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public async Task runprocess()
         {
 
